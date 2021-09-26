@@ -6,5 +6,6 @@ package com.pavelbelov.recipe.domain;
 public enum Difficulty {
     EASY,
     MODERATE,
+    KINDA_HARD,
     HARD
 }
