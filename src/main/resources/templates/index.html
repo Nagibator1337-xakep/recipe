@@ -4,8 +4,66 @@
     <meta charset="UTF-8">
     <title>Simple Recipe</title>
     <link rel="icon" type="image/ico" th:href="@{/favicon.ico}"/>
+    <style>
+        .layout {
+            width: 100%; /* Ширина всей таблицы */
+        }
+        TD {
+            vertical-align: top; /* Вертикальное выравнивание в ячейках */
+            padding: 2px; /* Поля вокруг ячеек */
+        }
+        TD.idcol {
+            background: #ccc; /* Цвет фона левой колонки */
+            border: 1px solid #000; /* Параметры рамки */
+        }
+        TD.notescol {
+            background: #f77; /* Цвет фона средний колонки */
+            border: 1px solid #000; /* Параметры рамки */
+        }
+        TD.directcol {
+            width: 35%; /* Ширина левой колонки */
+            background: #fcb; /* Цвет фона правой колонки */
+            border: 1px solid #000; /* Параметры рамки */
+        }
+        TD.ingredcol {
+            width: 15%; /* Ширина левой колонки */
+            background: #fba; /* Цвет фона правой колонки */
+            border: 1px solid #000; /* Параметры рамки */
+        }
+        .spacer {
+            width: 2px; /* Расстояние между колонками */
+        }
+    </style>
 </head>
 <body>
-    <h1 th:text="pidor">Pidor</h1>
+<h1>My Recipes!</h1>
+
+<table class="layout">
+    <tr>
+        <th>ID</th>
+        <th></th>
+        <th>Notes</th>
+        <th></th>
+        <th>Recipe</th>
+        <th></th>
+        <th>Ingredients</th>
+    </tr>
+    <tr th:each="recipe : ${recipes}">
+        <td class="idcol" th:text="${recipe.id}">123</td>
+        <td class="spacer"></td>
+        <td class="notescol" th:utext="${recipe.notes.recipeNotes}">Notes</td>
+        <td class="spacer"></td>
+        <td class="directcol" th:utext="${recipe.directions}">Sample Text</td>
+        <td class="spacer"></td>
+        <td class="ingredcol">
+            <table>
+                <tr th:each="ingredient : ${recipe.ingredients}">
+                    <td class="notescol" th:text="|${ingredient.amount} ${ingredient.uom.description} ${ingredient.description}|">Ingredient</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
 </body>
 </html>
