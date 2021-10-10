@@ -4,10 +4,12 @@ import com.pavelbelov.recipe.domain.*;
 import com.pavelbelov.recipe.repositories.CategoryRepository;
 import com.pavelbelov.recipe.repositories.RecipeRepository;
 import com.pavelbelov.recipe.repositories.UnitOfMeasureRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -18,6 +20,7 @@ import java.util.*;
 /**
  * Created by Pavel Belov on 27.09.2021
  */
+@Slf4j
 @Component
 public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
@@ -34,7 +37,9 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
     }
 
     @Override
+    @Transactional
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
+        log.debug("Strapping Boots...");
         recipeRepository.saveAll(getRecipes());
     }
 
@@ -48,7 +53,8 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
     private List<Recipe> getRecipes() {
         List<Recipe> recipes = new ArrayList<>(2);
 
-        // Getting UOM values from Optionals
+        log.debug("Getting Units of Measure values from Optionals");
+
         UnitOfMeasure tbspUnit = getUnit("Tablespoon");
         UnitOfMeasure tspUnit = getUnit("Teaspoon");
         UnitOfMeasure cloveUnit = getUnit("Clove");
@@ -58,30 +64,33 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
         UnitOfMeasure bunchUnit = getUnit("Bunch");
         UnitOfMeasure pinchUnit = getUnit("Pinch");
 
-        // Getting Categories from data.sql
+        log.debug("Units of Measure initialized");
+        log.debug("Getting Categories from data.sql");
+
         Optional<Category> mexOpt = categoryRepository.findByDescription("Mexican");
         if (mexOpt.isEmpty()) throw new RuntimeException("Expected Category not found in the DB");
 
         Optional<Category> amOpt = categoryRepository.findByDescription("American");
         if (amOpt.isEmpty()) throw new RuntimeException("Expected Category not found in the DB");
 
-        // Getting Category values from Optionals
+        log.debug("Getting Category values from Optionals");
         Category mexCat = mexOpt.get();
         Category amCat = amOpt.get();
 
         //
         // Tacos Recipe:
         //
-
         Recipe grilledChickenTacos = new Recipe();
 
-        // Saving Recipe directions from static/tacos.txt and static/tacosNotes.txt files to String parameters
+        log.debug("Saving Recipe directions from static/tacos.txt and static/tacosNotes.txt files to String parameters");
         String tacosDirectionsStr = null;
         String tacosNotesStr = null;
         try {
+            log.debug("Reading recipe files - Tacos");
             tacosDirectionsStr = Files.readString(Path.of("src/main/resources/static/tacos.txt"), StandardCharsets.UTF_8);
             tacosNotesStr = Files.readString(Path.of("src/main/resources/static/tacosNotes.txt"), StandardCharsets.UTF_8);
         } catch (IOException e) {
+            log.debug("IOException on reading recipe directions files - Tacos");
             e.printStackTrace();
         }
 
@@ -104,8 +113,7 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
         grilledChickenTacos.getCategories().add(mexCat);
         grilledChickenTacos.getCategories().add(amCat);
 
-
-        // Adding Ingredients to the Recipe
+        log.debug("Adding Ingredients to the Tacos Recipe");
         grilledChickenTacos.setIngredients(new HashSet<>());
 
         grilledChickenTacos.addIngredient(new Ingredient("Ancho chili powder", new BigDecimal(2),tbspUnit));
@@ -128,7 +136,7 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
         grilledChickenTacos.addIngredient(new Ingredient("Sour cream thinned with 1/4 cup milk", new BigDecimal("0.5"),cupUnit));
         grilledChickenTacos.addIngredient(new Ingredient("Lime, cut into wedges", new BigDecimal(1),pcsUnit));
 
-        // Adding Tacos Recipe to the Array of Recipes to be returned
+        log.debug("Adding Tacos Recipe to the Array of Recipes to be returned");
         recipes.add(grilledChickenTacos);
 
         //
@@ -137,17 +145,19 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
 
         Recipe guacamole = new Recipe();
 
-        // Saving Recipe directions from static/guac.txt and static/guacNotes.txt files to String parameters
+        log.debug("Saving Recipe directions from static/guac.txt and static/guacNotes.txt files to String parameters");
         String guacDirectionsStr = null;
         String guacNotesStr = null;
         try {
+            log.debug("Reading recipe files - Guacamole");
             guacDirectionsStr = Files.readString(Path.of("src/main/resources/static/guac.txt"), StandardCharsets.UTF_8);
             guacNotesStr = Files.readString(Path.of("src/main/resources/static/guacNotes.txt"), StandardCharsets.UTF_8);
         } catch (IOException e) {
+            log.debug("IOException on reading recipe directions files - Guacamole");
             e.printStackTrace();
         }
 
-        // Adding Notes
+        log.debug("Adding Notes");
         Notes guacNotes = new Notes();
         guacNotes.setRecipeNotes(guacNotesStr);
 
@@ -166,8 +176,7 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
         guacamole.getCategories().add(mexCat);
         guacamole.getCategories().add(amCat);
 
-
-        // Adding Ingredients to the Recipe
+        log.debug("Adding Ingredients to the Guac Recipe");
         guacamole.setIngredients(new HashSet<>());
 
         guacamole.addIngredient(new Ingredient("Ripe avocados", new BigDecimal(2),pcsUnit));
@@ -182,7 +191,7 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
         guacamole.addIngredient(new Ingredient("Red radish or jicama slices for garnish (optional)", new BigDecimal(1),pcsUnit));
         guacamole.addIngredient(new Ingredient("Tortilla chips, to serve", new BigDecimal(1),pcsUnit));
 
-        // Adding Guacamole Recipe to the Array of Recipes to be returned
+        log.debug("Adding Guacamole Recipe to the Array of Recipes to be returned");
         recipes.add(guacamole);
 
         return recipes;
