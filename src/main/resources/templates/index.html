@@ -3,67 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <title>Simple Recipe</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+          integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu"
+          crossorigin="anonymous" />
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
+            integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
+            crossorigin="anonymous"></script>
+
     <link rel="icon" type="image/ico" th:href="@{/favicon.ico}"/>
-    <style>
-        .layout {
-            width: 100%; /* Ширина всей таблицы */
-        }
-        TD {
-            vertical-align: top; /* Вертикальное выравнивание в ячейках */
-            padding: 2px; /* Поля вокруг ячеек */
-        }
-        TD.idcol {
-            background: #ccc; /* Цвет фона левой колонки */
-            border: 1px solid #000; /* Параметры рамки */
-        }
-        TD.notescol {
-            background: #f77; /* Цвет фона средний колонки */
-            border: 1px solid #000; /* Параметры рамки */
-        }
-        TD.directcol {
-            width: 35%; /* Ширина левой колонки */
-            background: #fcb; /* Цвет фона правой колонки */
-            border: 1px solid #000; /* Параметры рамки */
-        }
-        TD.ingredcol {
-            width: 15%; /* Ширина левой колонки */
-            background: #fba; /* Цвет фона правой колонки */
-            border: 1px solid #000; /* Параметры рамки */
-        }
-        .spacer {
-            width: 2px; /* Расстояние между колонками */
-        }
-    </style>
 </head>
 <body>
-<h1>My Recipes!</h1>
-
-<table class="layout">
-    <tr>
-        <th>ID</th>
-        <th></th>
-        <th>Notes</th>
-        <th></th>
-        <th>Recipe</th>
-        <th></th>
-        <th>Ingredients</th>
-    </tr>
-    <tr th:each="recipe : ${recipes}">
-        <td class="idcol" th:text="${recipe.id}">123</td>
-        <td class="spacer"></td>
-        <td class="notescol" th:utext="${recipe.notes.recipeNotes}">Notes</td>
-        <td class="spacer"></td>
-        <td class="directcol" th:utext="${recipe.directions}">Sample Text</td>
-        <td class="spacer"></td>
-        <td class="ingredcol">
-            <table>
-                <tr th:each="ingredient : ${recipe.ingredients}">
-                    <td class="notescol" th:text="|${ingredient.amount} ${ingredient.uom.description} ${ingredient.description}|">Ingredient</td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-</table>
-
+<div class="container-fluid" style="margin-top: 10px">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h1 class="panel-title">My Recipes!</h1>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive" th:if="${not #lists.isEmpty(recipes)}">
+                        <table class="table table-hover">
+                            <thead class="thead-inverse">
+                            <tr>
+                                <th>ID</th>
+                                <th>Notes</th>
+                                <th>Recipe</th>
+                                <th>Ingredients</th>
+                            </tr>
+                            </thead>
+                            <tr th:each="recipe : ${recipes}">
+                                <td th:text="${recipe.id}">123</td>
+                                <td style="width:45%" th:utext="${recipe.notes.recipeNotes}">Notes</td>
+                                <td style="width:25%" th:utext="${recipe.directions}">Sample Text</td>
+                                <td>
+                                    <table class="table table-hover">
+                                        <tr th:each="ingredient : ${recipe.ingredients}">
+                                            <td th:text="|${ingredient.amount}
+                                            ${ingredient.uom.description}
+                                            ${ingredient.description}|">Ingredient</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

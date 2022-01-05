@@ -27,13 +27,17 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
     private final RecipeRepository recipeRepository;
     private final CategoryRepository categoryRepository;
     private final UnitOfMeasureRepository unitOfMeasureRepository;
+    private final TacosRecipe tacosRecipe;
+    private final GuacRecipe guacRecipe;
 
     public RecipeBootstrap(RecipeRepository recipeRepository,
                            CategoryRepository categoryRepository,
-                           UnitOfMeasureRepository unitOfMeasureRepository) {
+                           UnitOfMeasureRepository unitOfMeasureRepository, TacosRecipe tacosRecipe, GuacRecipe guacRecipe) {
         this.recipeRepository = recipeRepository;
         this.categoryRepository = categoryRepository;
         this.unitOfMeasureRepository = unitOfMeasureRepository;
+        this.tacosRecipe = tacosRecipe;
+        this.guacRecipe = guacRecipe;
     }
 
     @Override
@@ -82,17 +86,18 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
         //
         Recipe grilledChickenTacos = new Recipe();
 
-        log.debug("Saving Recipe directions from static/tacos.txt and static/tacosNotes.txt files to String parameters");
-        String tacosDirectionsStr = null;
-        String tacosNotesStr = null;
-        try {
+//        log.debug("Saving Recipe directions from static/tacos.txt and static/tacosNotes.txt files to String parameters");
+/*        try {
             log.debug("Reading recipe files - Tacos");
             tacosDirectionsStr = Files.readString(Path.of("src/main/resources/static/tacos.txt"), StandardCharsets.UTF_8);
             tacosNotesStr = Files.readString(Path.of("src/main/resources/static/tacosNotes.txt"), StandardCharsets.UTF_8);
         } catch (IOException e) {
             log.debug("IOException on reading recipe directions files - Tacos");
             e.printStackTrace();
-        }
+        }*/
+
+        String tacosDirectionsStr = tacosRecipe.getDirections();
+        String tacosNotesStr = tacosRecipe.getNotes();
 
         // Adding Notes
         Notes tacosNotes = new Notes();
@@ -145,17 +150,19 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
 
         Recipe guacamole = new Recipe();
 
-        log.debug("Saving Recipe directions from static/guac.txt and static/guacNotes.txt files to String parameters");
-        String guacDirectionsStr = null;
-        String guacNotesStr = null;
-        try {
+//        log.debug("Saving Recipe directions from static/guac.txt and static/guacNotes.txt files to String parameters");
+
+/*        try {
             log.debug("Reading recipe files - Guacamole");
             guacDirectionsStr = Files.readString(Path.of("src/main/resources/static/guac.txt"), StandardCharsets.UTF_8);
             guacNotesStr = Files.readString(Path.of("src/main/resources/static/guacNotes.txt"), StandardCharsets.UTF_8);
         } catch (IOException e) {
             log.debug("IOException on reading recipe directions files - Guacamole");
             e.printStackTrace();
-        }
+        }*/
+
+        String guacDirectionsStr = guacRecipe.getDirections();
+        String guacNotesStr = guacRecipe.getNotes();
 
         log.debug("Adding Notes");
         Notes guacNotes = new Notes();
